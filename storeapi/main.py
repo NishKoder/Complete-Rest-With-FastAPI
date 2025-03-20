@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 
+from storeapi.routers.post import router as post_router
+
 app = FastAPI()
 
-
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+app.include_router(post_router, prefix="/api/v1/posts")

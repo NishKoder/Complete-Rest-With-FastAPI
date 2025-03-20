@@ -1,5 +1,8 @@
-fastapi
-pylint
-pytest
-pytest-cov
-black
+fastapi==0.115.11
+pylint==3.3.5
+pytest==8.3.5
+pytest-cov==6.0.0
+black==25.1.0
+fire==0.7.0
+uvicorn==0.34.0
+pydantic==2.10.6

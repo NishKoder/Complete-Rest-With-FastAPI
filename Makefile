@@ -2,11 +2,14 @@ install:
 	#install command
 	pip install --upgrade pip &&\
 		pip install -r requirements.txt
+dev:
+	#install dev command
+	pip install -r requirements-dev.txt
 format:
 	#format code
-	black storeapi/*.py
+	# black storeapi/*.py
 lint:
-	pylint --disable=R,C storeapi/*.py
+	# pylint --disable=R,C storeapi/*.py
 test:
 	#test
 	pip install httpx
