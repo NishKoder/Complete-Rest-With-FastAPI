@@ -1,1 +1,5 @@
 fastapi
+pylint
+pytest
+pytest-cov
+black
