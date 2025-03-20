@@ -9,8 +9,8 @@ lint:
 	pylint --disable=R,C storeapi/*.py
 test:
 	#test
-	#pip install httpx
-	#python -m pytest -vv --cov=storeapi --cov=main test_*.py
+	pip install httpx
+	python -m pytest -vv --cov=storeapi --cov=main Test/test_*.py
 build:
 	#build container
 	docker build -t deploy-fastapi .
@@ -19,4 +19,4 @@ run:
 	docker run -p 127.0.0.1:8081:8081 deploy-fastapi
 deploy:
 	#deploy
-all: install post_install lint test deploy
+all: install format lint test deploy
