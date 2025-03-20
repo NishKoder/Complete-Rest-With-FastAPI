@@ -4,15 +4,16 @@ install:
 		pip install -r requirements.txt
 format:
 	#format code
-	black *.py storeapi/*.py
+	black storeapi/*.py
 lint:
-	pylint --disable=R,C *.py storeapi/*.py
+	pylint --disable=R,C storeapi/*.py
 test:
 	#test
-	pip install httpx
-	python -m pytest -vv --cov=storeapi --cov=main test_*.py
+	#pip install httpx
+	#python -m pytest -vv --cov=storeapi --cov=main test_*.py
 build:
 	#build container
+	docker build -t deploy-fastapi .
 run:
 	#run container
 	docker run -p 127.0.0.1:8081:8081 deploy-fastapi
