@@ -13,7 +13,7 @@ lint:
 test:
 	#test
 	pip install httpx
-	python -m pytest -vv --cov=storeapi --cov=main Test/test_*.py
+	python -m pytest -vv --cov=storeapi --cov=main storeapi/tests/routers/test_*.py
 build:
 	#build container
 	docker build -t deploy-fastapi .
