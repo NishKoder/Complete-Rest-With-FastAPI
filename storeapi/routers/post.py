@@ -1,5 +1,7 @@
+import logging
 from fastapi import APIRouter, HTTPException
 
+from storeapi.database import comment_table, database, post_table
 from storeapi.models.post import (
     Comment,
     CommentIn,
@@ -10,13 +12,13 @@ from storeapi.models.post import (
 
 router = APIRouter()
 
+logging = logging.getLogger(__name__)
 
-post_table = {}
-comment_table = {}
-
-
-def find_post(post_id: int):
-    post = post_table.get(post_id)
+async def find_post(post_id: int) -> dict:
+    logging.debug("Getting post with id %s", post_id)
+    query = post_table.select().where(post_table.c.id == post_id)
+    logging.debug("Query: %s", query)
+    post = await database.fetch_one(query)
     if post is None:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
@@ -24,37 +26,47 @@ def find_post(post_id: int):
 
 @router.post("/post", response_model=UserPost, status_code=201)
 async def create_post(post: UserPostIn):
+    logging.debug("Creating post with data %s", post)
     data = post.dict()
-    last_post_id = len(post_table)
+    query = post_table.insert().values(data)
+    logging.debug("Query: %s", query)
+    last_post_id = await database.execute(query)
     new_post = {"id": last_post_id, **data}
-    post_table[last_post_id] = new_post
+    logging.debug("New post created: %s", new_post)
     return new_post
 
 
 @router.get("/post", response_model=list[UserPost])
 async def get_posts():
-    return list(post_table.values())
+    logging.debug("Getting all posts")
+    query = post_table.select()
+    logging.debug("Query: %s", query)
+    return await database.fetch_all(query)
 
 
 @router.post("/comment", response_model=Comment, status_code=201)
 async def create_comment(comment: CommentIn):
-    find_post(comment.post_id)
+    await find_post(comment.post_id)
+    logging.debug("Creating comment with data %s", comment)
     data = comment.dict()
-    last_comment_id = len(comment_table)
+    query = comment_table.insert().values(data)
+    logging.debug("Query: %s", query)
+    last_comment_id = await database.execute(query)
     new_comment = {"id": last_comment_id, **data}
-    comment_table[last_comment_id] = new_comment
     return new_comment
 
 
 @router.get("/post/{post_id}/comment", response_model=list[Comment])
 async def get_comments(post_id: int):
-    find_post(post_id)
-    return [
-        comment for comment in comment_table.values() if comment["post_id"] == post_id
-    ]
+    logging.debug("Getting comments for post with id %s", post_id)
+    query = comment_table.select().where(comment_table.c.post_id == post_id)
+    logging.debug("Query: %s", query)
+    return await database.fetch_all(query)
 
 
 @router.get("/post/{post_id}", response_model=UserPostWithComments)
 async def get_post_with_comments(post_id: int):
-    post = find_post(post_id)
+    logging.debug("Getting post with id %s", post_id)
+    post = await find_post(post_id)
+    logging.debug("Getting comments for post with id %s", post_id)
     return {"post": post, "comments": await get_comments(post_id)}

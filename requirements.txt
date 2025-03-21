@@ -10,3 +10,10 @@ sqlalchemy==2.0.39
 databases[aiosqlite]
 python-dotenv==1.0.1
 pydantic-settings==2.8.1
+rich==13.9.4
+asgi-correlation-id==4.3.4
+python-json-logger==3.3.0
+logtail-python==0.3.3
+python-jose==3.4.0
+python-multipart==0.0.20
+passlib[bcrypt]==1.7.4
